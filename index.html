@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="scrollspy_style.css" rel="stylesheet" type="text/css">
+
+
+    <script>
+        function scrollspy () {
+            let i = 0;
+
+            let doc = document.getElementById("demo");
+            let mynav = document.getElementById("mynav");
+            let linklist = mynav.getElementsByTagName("A");
+            let link = "";
+            let hashpositions = [];
+            let position = [];
+
+            for (i = 0; i < linklist.length; i++) {
+                link = linklist[i].href;
+                if (link.indexOf("#") > -1) {
+                    position[position.length] = document.getElementById(link.split("#")[1]);
+                    hashpositions[hashpositions.length] = position[i].offsetTop;
+                    linklist[i].innerHTML = linklist[i].innerHTML + " " + position[i].offsetTop
+                        + " " + (hashpositions[i] + position[i].clientHeight);
+                }
+            }
+            hashpositions.sort(function(a, b){return a-b});
+
+            return function () {
+                let currentposition = window.pageYOffset;
+                doc.innerHTML = currentposition;
+
+                for (i = 0; i < hashpositions.length; i++) {
+                    if (currentposition + 10 >= hashpositions[i]) {
+                        linklist[i].parentNode.classList.add("myactive");
+                    }
+                    else {
+                        linklist[i].parentNode.classList.remove("myactive");
+                    }
+                    if (currentposition > (hashpositions[i] + position[i].clientHeight)) {
+                        linklist[i].parentNode.classList.remove("myactive");
+                    }
+                }
+            }
+        }
+
+        function scrollsmooth_run (event) {
+            event.preventDefault();
+
+            let myHash = this.hash;
+            let mysection = document.getElementById(this.hash.substring(1));
+            let pageYOffset_start = window.pageYOffset;
+            let pos_diff = mysection.offsetTop - pageYOffset_start;
+            let pos_diff_delta = pos_diff / 100;
+            let varCounter = 0;
+            let id = setInterval(frame, 5);
+            function frame() {
+                console.log((mysection.offsetTop - 10) + " < " + window.pageYOffset + " < " + (mysection.offsetTop + 10));
+                let test = (mysection.offsetTop - 10) < window.pageYOffset && window.pageYOffset < (mysection.offsetTop + 10);
+                console.log("7: " + test);
+
+                if(varCounter <= 110) {
+                    varCounter++;
+                } else {
+                    clearInterval(id);
+                }
+
+                if ((mysection.offsetTop - 5) < window.pageYOffset && window.pageYOffset < (mysection.offsetTop + 5)) {
+                    clearInterval(id);
+                } else {
+                    window.scrollTo(window.pageXOffset, window.pageYOffset + pos_diff_delta);
+                }
+            }
+        }
+
+        function scrollsmooth () {
+            let linklist = mynav.getElementsByTagName("A");
+            for (i = 0; i < linklist.length; i++) {
+                linklist[i].onclick = scrollsmooth_run;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            let mybody = document.getElementById("mybody");
+            mybody.onscroll = scrollspy();
+            scrollsmooth();
+        }, false);
+
+    </script>
+
+    <title>scrollspy</title>
+</head>
+<body id="mybody">
+
+
+<header id="myhead">
+    <h1> this is the header </h1>
+</header>
+
+<section id="mytable">
+
+    <section id="content">
+
+        <section id="left-side">
+
+            <nav id="mynav">
+                <p id="demo">test</p>
+
+                <ul>
+                    <li><a href="#section1">section 1</a></li>
+                    <li><a href="#section2">section 2</a></li>
+                    <li><a href="#section3">section 3</a></li>
+                    <li><a href="#section4">section 4</a></li>
+                </ul>
+
+            </nav>
+
+        </section>
+
+        <section  id="right-side">
+
+            <section id="section1" class="section">
+                <h2> section 1 </h2>
+
+                <p> text </p>
+
+            </section>
+
+            <section id="section2" class="section">
+                <h2> section 2 </h2>
+
+                <p> text </p>
+
+            </section>
+
+            <section id="section3" class="section">
+                <h2> section 3 </h2>
+
+                <p> text </p>
+
+            </section>
+
+            <section id="section4" class="section">
+                <h2> section 4 </h2>
+
+                <p> text </p>
+
+            </section>
+
+        </section>
+
+    </section>
+
+</section>
+
+<footer id="myfooter"> this is the footer </footer>
+
+
+
+
+
+</body>
+</html>
